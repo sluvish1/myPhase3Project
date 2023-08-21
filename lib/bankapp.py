@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from datetime import datetime 
 
 Base = declarative_base()
@@ -28,11 +29,13 @@ class Customer(Base):
         return f"({self.customer_id}{self.firstname}{self.lastname} {self.dob} {self.phonenumber}{self.email})"
 
 
-class CustomerAccount(Base):
-    __tablename__ = "customer_account"
+# class CustomerAccount(Base):
+#     __tablename__ = "customer_account"
 
-    customer_foreignkey = Column(Integer)
-    account_foreignkey = ("id",Integer,)
+#     customer_foreignkey = Column(Integer)
+#     account_foreignkey = Column("id",Integer,ForeignKey())
+
+
 
 class Account(Base):
     __tablename__ = 'accounts'
@@ -46,3 +49,8 @@ class Account(Base):
 
 engine = create_engine("sqlite:///myptoject.bd, echol=Ture")
 Base.metadata.create_all(bind=engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
+customer = Customer()
