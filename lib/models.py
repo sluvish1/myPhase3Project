@@ -1,5 +1,6 @@
-from sqlalchemy import create_engine, Column, Integer, String,ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String,Table,ForeignKey
 from datetime import datetime
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -9,26 +10,32 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
+
+customers_account = Table(
+  "customers_accounts",
+  Base.metadata,
+  Column("customers_id",ForeignKey("customers.id"), primary_key=True),
+  Column("accounts_id",ForeignKey("accounts.id"), primary_key=True),
+  Column("balance",Integer()),
+  extend_existing=True,
+)
+
 class Customer(Base):
     __tablename__ = "customers"
 
     customerid = Column("id",Integer(), primary_key=True, autoincrement=True)
     firstname = Column(String())
     lastname = Column(String())
-    dob = Column(datetime())
+    dob = Column(String())
     phonenumber = Column(String(),unique=True)
     email = Column(String(),unique=True)
 
-    accounts = relationship("Account", secondary=customers_accounts, back_populates="customers")
-    customeraccount = relationship("CustomerAccount", backref=backref("customer") )
+    accounts = relationship("Accont",secondary=customers_account,back_populates="customers")
 # my reason for making the phonenumber a string instead of an int is because i wont be doing any math with it.
 
     def __repr__(self):
       return f"<Customer(firstname={self.accounttype}, lastname={self.lastname}, dob={self.dob}, phonenumber={self.phonenumber}, email={self.email})>"
     
-
-    if __name__ == '__main__':
-     Base.metadata.create_all(engine)
 
 
 class Account(Base):
@@ -37,27 +44,10 @@ class Account(Base):
     accountid = Column("id",Integer, primary_key=True , autoincrement=True)
     accounttype = Column(String())
 
-    customers = relationship("Customers", secondary=customers_accounts, back_populates="accounts")
-    customeraccount = relationship("CustomerAccount", backref=backref("account") )
+    customeers = relationship("Customer", secondary=customers_account, back_populates="accounts")
+
     def __repr__(self):
       return f"<Account(account_type={self.accounttype})>"
-    
-# this creates the database
-    if __name__ == '__main__':
-     Base.metadata.create_all(engine)
-
-
-
-
-class CustomerAccount(Base):
-  __tablename__ = "customers_accounts"
-
-  idd= Column("id",Integer,primary_key=True)
-
-  customer_id=Column(Integer(),ForeignKey(customers.id))
-  accoutn_id=Column(Integer(),ForeignKey(accounts.id))
-  def __repr__(self):
-    return f"<CustomerAccount(customer_id={self.customer_id})>"
 
 
 """
