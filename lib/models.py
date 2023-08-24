@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine, Column, Integer, String,Table,ForeignKey
-from datetime import datetime
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -48,17 +47,3 @@ class Account(Base):
 
     def __repr__(self):
       return f"<Account(account_type={self.accounttype})>"
-
-
-"""
-What do i want my app to do?
-
-1. Allow users that are already customers who already have an account to login
-2. Users without and accout will need to signup
-3. Show all of the accounts the user has along with the balance 
-5. Allow users to open a new account
-6. Allow users to close accounts they no long want 
-
-a customer can have many types of accounts and many accounts can belong to many users
-
-"""
